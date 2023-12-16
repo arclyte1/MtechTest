@@ -1,0 +1,24 @@
+version: "3.10"
+services:
+  web:
+    image: web
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - POSTGRES_URL=postgresql://db:5432/root
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123
+    ports:
+      - 8080:8080
+
+  db:
+    image: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root"]
+      interval: '5s'
+      start_period: '5s'
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123
